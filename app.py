@@ -9,6 +9,7 @@ from components.navbar import navbar
 from components.info_table import grid
 from components.community_panel import community_panel
 from components.city_view import city_panel
+from components.community_panel_filter import community_panel_filter
 
 #
 # read data

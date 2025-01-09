@@ -1,8 +1,10 @@
 import dash_bootstrap_components as dbc
-from dash import html, dcc
+from dash import html, dcc, Input, Output, callback
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+
+from components.community_panel_filter import community_panel_filter
 
 #
 df = pd.read_csv("./data/NYC_housingOnly_v0.csv")
@@ -26,14 +28,17 @@ df_info = pd.read_csv(
         "Location Point",
     ],
 )
+df_info["Borough_CommBoard"] = (
+    df_info.Borough + "_" + df_info["Community Board 1"].astype(str)
+)
 # placeholder (by now ...)
-df_cb = df_info[df_info["Community Board 1"] == 201]
+df_cb = df_info[df_info["Borough_CommBoard"] == "Bronx_201"]
 fig_cb = px.scatter_map(
     df_cb,
     lat="Latitude",
     lon="Longitude",
     zoom=10,
-    text=df_cb["Borough"] + "_" + df_cb["Community Board 1"].astype(str),
+    text="Borough_CommBoard",
 )
 
 fig_cb.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
@@ -42,7 +47,9 @@ fig_cb.update_traces(textposition="top center")
 
 community_card = dbc.Card(
     [
-        dbc.CardHeader(["Bronx - 201"], className="bg-primary fw-bold text-light  "),
+        dbc.CardHeader(
+            ["Bronx_201"], id="headerCb-id", className="bg-primary fw-bold text-light  "
+        ),
         dbc.CardBody(
             dbc.Container(
                 [
@@ -52,16 +59,25 @@ community_card = dbc.Card(
                                 [
                                     html.H6("Neighboorhoods", className="card-title"),
                                     html.P(
-                                        "Mott Haven, Port Morris, and Melrose",
+                                        ["Mott Haven, Port Morris, and Melrose"],
                                         className="card-text",
+                                        id="parNbh-id",
                                     ),
                                     html.H6("Zip Code", className="card-title"),
-                                    html.P("10455", className="card-text"),
+                                    html.P(
+                                        ["10455"], className="card-text", id="parZip-id"
+                                    ),
                                 ],
                                 width=7,
                             ),
                             dbc.Col(
-                                [dcc.Graph(figure=fig_cb, style={"height": "20vh"})],
+                                [
+                                    dcc.Graph(
+                                        figure=fig_cb,
+                                        id="graphBorCb-id",
+                                        style={"height": "20vh"},
+                                    )
+                                ],
                                 width=5,
                             ),
                         ]
@@ -104,5 +120,37 @@ fig_star.add_hline(
 )
 
 community_panel = dbc.Container(
-    [dbc.Row(community_card), dbc.Row(dcc.Graph(figure=fig_star))]
+    [
+        dbc.Row(community_panel_filter),
+        dbc.Row(community_card),
+        dbc.Row(dcc.Graph(figure=fig_star)),
+    ]
 )
+
+
+@callback(
+    Output("graphBorCb-id", "figure"),
+    Output("headerCb-id", "children"),
+    Output("parNbh-id", "children"),
+    Output("parZip-id", "children"),
+    Input("ddBorCb-id", "value"),
+    # prevent_initial_call=True,
+)
+def update_dropdown_options(value1):
+    df_cb = df_info[df_info["Borough_CommBoard"] == value1]
+    fig_cb = px.scatter_map(
+        df_cb,
+        lat="Latitude",
+        lon="Longitude",
+        zoom=10,
+        text="Borough_CommBoard",
+    )
+
+    fig_cb.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig_cb.update_layout(map_style="open-street-map")
+    fig_cb.update_traces(textposition="top center")
+    nbhList = df_cb["Neighborhoods"].values[0]
+    headerCb = df_cb["Borough_CommBoard"].values[0]
+    zipCb = df_cb["Postcode"].values[0]
+
+    return fig_cb, headerCb, nbhList, zipCb
