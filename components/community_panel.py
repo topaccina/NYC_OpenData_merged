@@ -9,7 +9,8 @@ from components.community_panel_filter import community_panel_filter
 #
 df = pd.read_csv("./data/NYC_housingOnly_v0.csv")
 df_EnergyScore = (
-    df.groupby(by=["Borough", "Community Board"])["ENERGY STAR Score"]
+    df[df["Calendar Year"] == 2023]
+    .groupby(by=["Borough", "Community Board"])["ENERGY STAR Score"]
     .mean()
     .round(1)
     .reset_index()
@@ -48,7 +49,9 @@ fig_cb.update_traces(textposition="top center")
 community_card = dbc.Card(
     [
         dbc.CardHeader(
-            ["Bronx_201"], id="headerCb-id", className="bg-primary fw-bold text-light  "
+            ["Bronx_201"],
+            id="headerCb-id",
+            className="bg-primary fw-bold text-light mt-2  ",
         ),
         dbc.CardBody(
             dbc.Container(
@@ -123,7 +126,16 @@ community_panel = dbc.Container(
     [
         dbc.Row(community_panel_filter),
         dbc.Row(community_card),
-        dbc.Row(dcc.Graph(figure=fig_star)),
+        dbc.Row(
+            [
+                dbc.Col([dcc.Graph(figure=fig_star, id="graphStar-id")], md=6, xs=12),
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col([dcc.Graph(figure=fig_star, id="graphStar2-id")], md=6, xs=12),
+            ]
+        ),
     ]
 )
 
@@ -133,6 +145,7 @@ community_panel = dbc.Container(
     Output("headerCb-id", "children"),
     Output("parNbh-id", "children"),
     Output("parZip-id", "children"),
+    Output("graphStar-id", "figure"),
     Input("ddBorCb-id", "value"),
     # prevent_initial_call=True,
 )
@@ -153,4 +166,33 @@ def update_dropdown_options(value1):
     headerCb = df_cb["Borough_CommBoard"].values[0]
     zipCb = df_cb["Postcode"].values[0]
 
-    return fig_cb, headerCb, nbhList, zipCb
+    cbIndex = df_info[df_info["Borough_CommBoard"] == value1][
+        "Community Board 1"
+    ].values[0]
+    indexSelected = x.tolist().index(cbIndex)
+    colors = [
+        "lightslategray",
+    ] * len(x)
+    colors[indexSelected] = "crimson"
+    fig_star = go.Figure(
+        data=[
+            go.Bar(
+                x=x.astype(str),
+                y=y,
+                marker_color=colors,  # marker color can be a single color value or an iterable
+            )
+        ]
+    )
+    fig_star.update_layout(
+        title_text="Average ENERGY STAR Score - Community Boards Comparison"
+    )
+    fig_star.add_hline(
+        y=y.mean(),
+        line_width=3,
+        line_dash="dash",
+        line_color="green",
+        annotation_text="mean",
+        annotation_position="top left",
+    )
+
+    return fig_cb, headerCb, nbhList, zipCb, fig_star
