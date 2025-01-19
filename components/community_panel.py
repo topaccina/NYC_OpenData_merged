@@ -5,6 +5,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 from components.community_panel_filter import community_panel_filter
+from components.community_cards import card_collection
+from components.community_info import communityBoard_map_card
+from components.community_fig import cbStar_chart, cbStar_chart_pct
 
 #
 df = pd.read_csv("./data/NYC_housingOnly_v0.csv")
@@ -15,6 +18,20 @@ df_EnergyScore = (
     .round(1)
     .reset_index()
 )
+
+df["ENERGY STAR Score Pass"] = df[df["Calendar Year"] == 2023][
+    "ENERGY STAR Score"
+].apply(lambda x: 1 if x >= 75 else 0)
+df_EnergyScoreTop = (
+    df[df["Calendar Year"] == 2023]
+    .groupby(by=["Borough", "Community Board"])
+    .aggregate({"ENERGY STAR Score": "count", "ENERGY STAR Score Pass": "sum"})
+    .reset_index()
+)
+df_EnergyScoreTop["ENERGY STAR Score Pass pct"] = (
+    df_EnergyScoreTop["ENERGY STAR Score Pass"] / df_EnergyScoreTop["ENERGY STAR Score"]
+).round(2) * 100
+
 
 df_info = pd.read_csv(
     "./data/NYC_Community_Boards.csv",
@@ -32,108 +49,38 @@ df_info = pd.read_csv(
 df_info["Borough_CommBoard"] = (
     df_info.Borough + "_" + df_info["Community Board 1"].astype(str)
 )
-# placeholder (by now ...)
-df_cb = df_info[df_info["Borough_CommBoard"] == "Bronx_201"]
-fig_cb = px.scatter_map(
-    df_cb,
-    lat="Latitude",
-    lon="Longitude",
-    zoom=10,
-    text="Borough_CommBoard",
-)
 
-fig_cb.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-fig_cb.update_layout(map_style="open-street-map")
-fig_cb.update_traces(textposition="top center")
-
-community_card = dbc.Card(
-    [
-        dbc.CardHeader(
-            ["Bronx_201"],
-            id="headerCb-id",
-            className="bg-primary fw-bold text-light mt-2  ",
-        ),
-        dbc.CardBody(
-            dbc.Container(
-                [
-                    dbc.Row(
-                        [
-                            dbc.Col(
-                                [
-                                    html.H6("Neighboorhoods", className="card-title"),
-                                    html.P(
-                                        ["Mott Haven, Port Morris, and Melrose"],
-                                        className="card-text",
-                                        id="parNbh-id",
-                                    ),
-                                    html.H6("Zip Code", className="card-title"),
-                                    html.P(
-                                        ["10455"], className="card-text", id="parZip-id"
-                                    ),
-                                ],
-                                width=7,
-                            ),
-                            dbc.Col(
-                                [
-                                    dcc.Graph(
-                                        figure=fig_cb,
-                                        id="graphBorCb-id",
-                                        style={"height": "20vh"},
-                                    )
-                                ],
-                                width=5,
-                            ),
-                        ]
-                    )
-                ]
-            )
-        ),
-    ],
-    className=" mb-3",
-)
-
-
-# x = [cb for cb in df_info["Community Board 1"].astype(int).unique()]
-x = df_EnergyScore["Community Board"].astype(int).values
-y = df_EnergyScore["ENERGY STAR Score"].values
-indexSelected = x.tolist().index(201)
-colors = [
-    "lightslategray",
-] * len(x)
-colors[indexSelected] = "crimson"
-fig_star = go.Figure(
-    data=[
-        go.Bar(
-            x=x.astype(str),
-            y=y,
-            marker_color=colors,  # marker color can be a single color value or an iterable
-        )
-    ]
-)
-fig_star.update_layout(
-    title_text="Average ENERGY STAR Score - Community Boards Comparison"
-)
-fig_star.add_hline(
-    y=y.mean(),
-    line_width=3,
-    line_dash="dash",
-    line_color="green",
-    annotation_text="mean",
-    annotation_position="top left",
-)
+community_card = dbc.Card()
+fig_star = go.Figure()
+fig_star_pct = go.Figure()
+card_summary = {"201": "x", "Bronks": "x", "NYC": "y"}
 
 community_panel = dbc.Container(
     [
         dbc.Row(community_panel_filter),
-        dbc.Row(community_card),
+        dbc.Row([community_card], id="cb_card_map"),
         dbc.Row(
             [
-                dbc.Col([dcc.Graph(figure=fig_star, id="graphStar-id")], md=6, xs=12),
-            ]
+                dbc.Col(
+                    [
+                        dbc.Container(
+                            dbc.Row(
+                                "",  # card_collection(card_summary),
+                                className="my-4",
+                                id="cbCard-id",
+                            ),
+                        )
+                    ],
+                )
+            ],
+            className="my-4",
         ),
         dbc.Row(
             [
-                dbc.Col([dcc.Graph(figure=fig_star, id="graphStar2-id")], md=6, xs=12),
+                dbc.Col([dcc.Graph(figure=fig_star, id="graphStar-id")], md=6, xs=12),
+                dbc.Col(
+                    [dcc.Graph(figure=fig_star_pct, id="graphStarPct-id")], md=6, xs=12
+                ),
             ]
         ),
     ]
@@ -141,58 +88,23 @@ community_panel = dbc.Container(
 
 
 @callback(
-    Output("graphBorCb-id", "figure"),
-    Output("headerCb-id", "children"),
-    Output("parNbh-id", "children"),
-    Output("parZip-id", "children"),
+    # Output("graphBorCb-id", "figure"),
+    # Output("headerCb-id", "children"),
+    # Output("parNbh-id", "children"),
+    # Output("parZip-id", "children"),
+    Output("cb_card_map", "children"),
     Output("graphStar-id", "figure"),
+    Output("graphStarPct-id", "figure"),
+    Output("cbCard-id", "children"),
     Input("ddBorCb-id", "value"),
     # prevent_initial_call=True,
 )
 def update_dropdown_options(value1):
-    df_cb = df_info[df_info["Borough_CommBoard"] == value1]
-    fig_cb = px.scatter_map(
-        df_cb,
-        lat="Latitude",
-        lon="Longitude",
-        zoom=10,
-        text="Borough_CommBoard",
-    )
 
-    fig_cb.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-    fig_cb.update_layout(map_style="open-street-map")
-    fig_cb.update_traces(textposition="top center")
-    nbhList = df_cb["Neighborhoods"].values[0]
-    headerCb = df_cb["Borough_CommBoard"].values[0]
-    zipCb = df_cb["Postcode"].values[0]
+    fig_star = cbStar_chart(value1)
+    fig_star_pct = cbStar_chart_pct(value1)
 
-    cbIndex = df_info[df_info["Borough_CommBoard"] == value1][
-        "Community Board 1"
-    ].values[0]
-    indexSelected = x.tolist().index(cbIndex)
-    colors = [
-        "lightslategray",
-    ] * len(x)
-    colors[indexSelected] = "crimson"
-    fig_star = go.Figure(
-        data=[
-            go.Bar(
-                x=x.astype(str),
-                y=y,
-                marker_color=colors,  # marker color can be a single color value or an iterable
-            )
-        ]
-    )
-    fig_star.update_layout(
-        title_text="Average ENERGY STAR Score - Community Boards Comparison"
-    )
-    fig_star.add_hline(
-        y=y.mean(),
-        line_width=3,
-        line_dash="dash",
-        line_color="green",
-        annotation_text="mean",
-        annotation_position="top left",
-    )
+    cbCard = card_collection(value1)
+    cb_card_map = communityBoard_map_card(value1)
 
-    return fig_cb, headerCb, nbhList, zipCb, fig_star
+    return cb_card_map, fig_star, fig_star_pct, cbCard

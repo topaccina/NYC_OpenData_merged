@@ -2,6 +2,7 @@ import dash_bootstrap_components as dbc
 from dash import html, dcc, callback, callback_context, Input, Output, no_update
 import pandas as pd
 
+
 df = pd.read_csv("./data/NYC_housingOnly_v0.csv")
 
 
