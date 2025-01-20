@@ -21,7 +21,8 @@ from components.community_panel_filter import community_panel_filter
 #
 
 app = Dash(
-    external_stylesheets=[dbc.themes.BOOTSTRAP],
+    # The dbc CYBORG team is generalized as the main style theme for the application, seconded by the dark_theme.css within the assets folder
+    external_stylesheets=[dbc.themes.CYBORG, "/assets/dark_theme.css"],
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
 )
 
@@ -31,16 +32,25 @@ accordion = dbc.Accordion(
             [city_panel],
             title="Your City ...",
             className="mt-1 ms-2 me-2 primary",
+            style={"backgroundColor": "#060606", # CYBORG-compatible dark background color for accordio item
+                   "color": "#white" # CYBORG-compatible white text color for accordio item
+
+            },
         ),
         dbc.AccordionItem(
             [community_panel],
             title="Your Community ...",
             className="mt-1 ms-2 me-2 primary",
+            style={"backgroundColor": "#060606", # CYBORG-compatible dark background color for accordio item
+                   "color": "#white" # CYBORG-compatible white text color for accordio item
+            },      
         ),
         dbc.AccordionItem(
             [
                 html.P("This is the content of the second section"),
                 dbc.Button("Don't click me!", color="danger"),
+
+                
             ],
             title="Your Building ...",
             className="mt-1 ms-2 me-2",
@@ -68,8 +78,41 @@ tab2_content = dbc.Card(
 
 tabs = dbc.Tabs(
     [
-        dbc.Tab(tab1_content, label="Your Search"),
-        dbc.Tab(tab2_content, label="NYC Info"),
+        dbc.Tab(tab1_content, 
+                label="Your Search",
+                
+                # style for the entire tab
+                style={"backgroundColor": "#060606", # CYBORG-compatible dark style for the entire tab background
+                       "color": "#white"}, # white text style for the entire tab
+                
+                # style for each tab
+                tab_style={"backgroundColor": "#006BB6", # NY blue color for tabs 
+                           "color": "white", # white text color for tabs
+                           "border": "2px solid #ffffff" #
+                           },
+
+                # style for the active tab,  which overwritten by CYBORG theme
+                active_tab_style={"backgroundColor": "#d4e8f3", #Baby blue for active tab
+                                  "color": "black", # black text color for active tab
+                                  "border": "1.5px solid #ffffff"} # white border for active tab
+                ),
+        dbc.Tab(tab2_content, 
+                label="NYC Info",
+                # style for the entire tab
+                style={"backgroundColor": "#060606", # CYBORG-compatible dark style for the entire tab background
+                       "color": "#white"}, # white text style for the entire tab
+                
+                # style for each tab
+                tab_style={"backgroundColor": "#006BB6", # NY blue color for tabs 
+                           "color": "white", # white text color for tabs
+                           "border": "2px solid #ffffff" #
+                           },
+
+                # style for the active tab,  which overwritten by CYBORG theme 
+                active_tab_style={"backgroundColor": "#d4e8f3", #Baby blue for active tab
+                                  "color": "black", # black text color for active tab
+                                  "border": "1.5px solid #ffffff"} # white border for active tab
+                ),
         # dbc.Tab("This tab's content is never seen", label="Tab 3", disabled=True),
     ],
 )

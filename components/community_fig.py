@@ -66,7 +66,24 @@ def cbStar_chart(value1):
         ]
     )
     fig_star.update_layout(
-        title_text="Average ENERGY STAR Score - Community Boards Comparison"
+        title_text="Average ENERGY STAR Score - Community Boards Comparison",
+        paper_bgcolor="#060606",  # Primary background color
+        plot_bgcolor="#2a2a2a",   # Secondary background color
+        font_color="white",       # White font color for contrast
+        hoverlabel=dict(
+                #bgcolor="white",
+                font_color="white",
+                font_size=16,
+                #font_family="Rockwell"
+                ),
+        coloraxis_colorbar=dict(
+            title=dict(
+                
+                font=dict(color="white")  # Colorbar title font color
+            ),
+            tickcolor="white",           # Colorbar tick color
+            tickfont=dict(color="white"),# Colorbar tick font color
+ )
     )
     fig_star.add_hline(
         y=y.mean(),
@@ -100,7 +117,23 @@ def cbStar_chart_pct(value1):
         ]
     )
     fig_star.update_layout(
-        title_text="Pct ENERGY STAR Score over 75 - Community Boards Comparison"
+        paper_bgcolor="#060606",  # Primary background color
+        plot_bgcolor="#2a2a2a",   # Secondary background color
+        font_color="white",       # White font color for contrast
+        hoverlabel=dict(
+                #bgcolor="white",
+                font_color="white",
+                font_size=16,
+                #font_family="Rockwell"
+                ),
+        coloraxis_colorbar=dict(
+            title=dict(
+                
+                font=dict(color="white")  # Colorbar title font color
+            ),
+            tickcolor="white",           # Colorbar tick color
+            tickfont=dict(color="white"),# Colorbar tick font color
+ )
     )
     fig_star.add_hline(
         y=y.mean(),

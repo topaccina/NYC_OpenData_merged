@@ -1,0 +1,78 @@
+/* Placeholder text styling for dropdowns */
+.dcc-dropdown > div > input::placeholder {
+    color: white !important;  /* Set placeholder text color to white */
+    opacity: 1 !important;    /* Ensure full opacity */
+}
+
+/* Dark theme styling for dropdown control */
+.dcc-dropdown {
+    background-color: #000000 !important; /* Dropdown background */
+    color: #f4f1f1 !important;           /* Dropdown text color */
+    border: 1px solid #fbf9f9 !important; /* Dropdown border */
+    border-radius: 4px;                   /* Rounded corners */
+}
+
+
+/* Styling for the selected value (in-place text) */
+.dcc-dropdown > div:first-child {
+    color: white !important; /* Ensure selected text is white */
+}
+
+/* Dark theme styling for dropdowns */
+.Dropdown {
+    background-color: #000000;
+    border: 0.1px solid #fbf9f9;
+    color: #f4f1f1; /* Change the color of the dropdown control */
+}
+
+/* This ensures the dropdown menu itself, not just the control, also follows the dark theme */
+.VirtualizedSelectOption {
+    background-color: #080101; /* Change the color of the options */
+    color: #f6f6f6; /* Change the color of the options words*/
+}
+
+/* Highlighted (focused) dropdown option styling */
+.VirtualizedSelectFocusedOption {
+    background-color: #2a2a2a !important; /* Background for focused option */
+    color: white !important;             /* Text for focused option */
+}
+
+/* Ensure scrollbar blends with the dark theme */
+.VirtualizedSelectMenuList::-webkit-scrollbar {
+    width: 8px;
+    background-color: #000000; /* Scrollbar background */
+}
+
+.VirtualizedSelectMenuList::-webkit-scrollbar-thumb {
+    background-color: #444444; /* Scrollbar thumb */
+}
+
+/*==============Add more specific rules to overrride the active tab color from the bootstrap theme for the tab colors================================
+
+/* Force override for active tabs */
+.nav-tabs .nav-link.active {
+    background-color: #D6EAF8 !important; /* Light blue for active tab */
+    color: black !important;             /* Black text for active tab */
+    border: 1px solid #ffffff !important; /* White border for active tab */
+}
+/* Accordion Container Styling */
+.accordion {
+    background-color: #D6EAF8; /* Dark background for the accordion container */
+    border-radius: 4px;       /* Rounded corners for the accordion */
+    border: 1px solid #000925; /* Optional: outer border for the accordion */
+}
+
+/* Styling for Accordion Items */
+.accordion-item {
+    background-color: #060606 !important; /* Dark blue background for items */
+    color: white !important;             /* White text for items */
+    border: 1px solid #ffffff !important; /* White border for items */
+}
+
+/* Styling for Accordion Headers */
+.accordion-button {
+    background-color: #060606 !important; /* Dark blue background for headers */
+    color: white !important;             /* White text for headers */
+    border: 1px solid #ffffff !important; /* White border for headers */
+    border-radius: 4px;                  /* Rounded corners */
+}
