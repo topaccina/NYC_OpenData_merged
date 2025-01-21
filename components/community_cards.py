@@ -10,6 +10,13 @@ df_EnergyScore = (
     .round(1)
     .reset_index()
 )
+df_EnergyScoreBorough = (
+    df[df["Calendar Year"] == 2023]
+    .groupby(by=["Borough"])["ENERGY STAR Score"]
+    .mean()
+    .round(1)
+    .reset_index()
+)
 
 df["ENERGY STAR Score Pass"] = df[df["Calendar Year"] == 2023][
     "ENERGY STAR Score"
@@ -25,6 +32,8 @@ df_EnergyScoreTop = (
 df_EnergyScoreTop["ENERGY STAR Score Pass pct"] = (
     df_EnergyScoreTop["ENERGY STAR Score Pass"] / df_EnergyScoreTop["ENERGY STAR Score"]
 ).round(2) * 100
+
+
 #######################
 df_EnergyScoreTopBor = (
     df[df["Calendar Year"] == 2023]
@@ -59,13 +68,16 @@ df_info["Borough_CommBoard"] = (
 
 def make_card(title, amount):
     return dbc.Col(
-        dbc.Card(
-            [
-                dbc.CardHeader(html.H2(title)),
-                dbc.CardBody(html.H3(amount, id=title)),
-            ],
-            className="text-center shadow",
-        )
+        [
+            dbc.Card(
+                [
+                    dbc.CardHeader(html.H2(title)),
+                    dbc.CardBody(html.H5(f"Average: {amount}", id=title)),
+                    dbc.CardFooter(html.H6(f"{amount}% with Score over 75")),
+                ],
+                className="text-center shadow",
+            )
+        ]
     )
 
 
@@ -77,10 +89,14 @@ def card_collection(value1):
     ].values[0]
     indexSelected = x.tolist().index(cbIndex)
     cbAvg = y[indexSelected]
-    borAvg = ""
-    NYCAvg = ""
+    borSelected = df_info[df_info["Borough_CommBoard"] == value1]["Borough"].values[0]
+    NYCAvg = df_EnergyScore["ENERGY STAR Score"].mean()
     cbTop_pct = ""
-    summary = {str(value1): str(cbAvg), "Bronks": "x", "NYC": "y"}
+    summary = {
+        str(value1): str(cbAvg),
+        str(borSelected): "x",
+        "NYC": str(NYCAvg.round(1)),
+    }
 
     return [(make_card(k, v)) for k, v in summary.items()]
 

@@ -1,5 +1,5 @@
 import pandas as pd
-from dash import Dash, dcc, html, Input, Output
+from dash import Dash, dcc, html, Input, Output, clientside_callback
 import plotly.express as px
 import dash_bootstrap_components as dbc
 import json
@@ -74,8 +74,19 @@ tabs = dbc.Tabs(
     ],
 )
 
+# color_mode_switch = html.Span(
+#     [
+#         dbc.Label(className="fa fa-moon", html_for="switch"),
+#         dbc.Switch(
+#             id="switch", value=True, className="d-inline-block ms-1", persistence=True
+#         ),
+#         dbc.Label(className="fa fa-sun", html_for="switch"),
+#     ]
+# )
+
 app.layout = dbc.Container(
     [
+        # dbc.Row([color_mode_switch]),
         dbc.Row([dbc.Col([navbar])]),
         # dbc.Row([dbc.Col([tabs])]),
         dbc.Row(
@@ -96,6 +107,17 @@ app.layout = dbc.Container(
     ],
     fluid=True,
 )
+
+# clientside_callback(
+#     """
+#     (switchOn) => {
+#        document.documentElement.setAttribute('data-bs-theme', switchOn ? 'light' : 'dark');
+#        return window.dash_clientside.no_update
+#     }
+#     """,
+#     Output("switch", "id"),
+#     Input("switch", "value"),
+# )
 
 if __name__ == "__main__":
     app.run_server(debug=True)

@@ -63,12 +63,24 @@ community_panel = dbc.Container(
             [
                 dbc.Col(
                     [
-                        dbc.Container(
-                            dbc.Row(
-                                "",  # card_collection(card_summary),
-                                className="my-4",
-                                id="cbCard-id",
-                            ),
+                        dbc.Card(
+                            [
+                                dbc.CardHeader(
+                                    ["ENERGY STAR Score Summary"],
+                                    className="bg-secondary fw-bold text-light mt-2 ms-3 me-3  ",
+                                ),
+                                dbc.CardBody(
+                                    [
+                                        dbc.Container(
+                                            dbc.Row(
+                                                "",  # card_collection(card_summary),
+                                                className="my-4",
+                                                id="cbCard-id",
+                                            ),
+                                        )
+                                    ]
+                                ),
+                            ],
                         )
                     ],
                 )
