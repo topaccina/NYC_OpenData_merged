@@ -36,6 +36,22 @@ def create_choropleth_map(dataframe, color, range_color, labels):
         center={"lat": 40.7128, "lon": -74.0060},
         height=650,
     )
+
+    # Update layout to match Cyborg theme
+    fig.update_layout(
+        paper_bgcolor="#060606",  # Primary background color
+        plot_bgcolor="#2a2a2a",   # Secondary background color
+        font_color="white",       # White font color for contrast
+        margin={"r": 10, "t": 25, "l": 10, "b": 10},  # Adjust margins
+        coloraxis_colorbar=dict(
+            title=dict(
+                text=color,
+                font=dict(color="white")  # Colorbar title font color
+            ),
+            tickcolor="white",           # Colorbar tick color
+            tickfont=dict(color="white"),# Colorbar tick font color
+        ),
+    )
     return fig
 
 
@@ -50,6 +66,13 @@ city_panel = dbc.Container(
                 "Indoor Water Use (All Water Sources) (kgal)",
                 "Year Built",
             ],
+            style={
+                "backgroundColor": "#white",  # Black background
+                "color": "#FFFFFF",             # White text
+                "border": "1px solid #ffffff",  # Border for consistency with theme
+                "border-radius": "4px",        # Rounded corners
+                "placeholder": {"color": "#ffffff"},  # White placeholder text
+                   },
         ),
         dcc.Graph(id="zip-map"),
         html.Div(id="filler"),

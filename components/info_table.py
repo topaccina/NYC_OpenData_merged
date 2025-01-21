@@ -21,5 +21,7 @@ columnDefs = [{"field": col, "filter": True} for col in df_info.columns]
 grid = dag.AgGrid(
     id="getting-started-filter",
     rowData=df_info.to_dict("records"),
+    className="ag-theme-alpine-dark",   # Apply dark theme
+    style={"height": "400px", "width": "100%"},  # Adjust table size
     columnDefs=columnDefs,
 )

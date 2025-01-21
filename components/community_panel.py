@@ -9,7 +9,6 @@ from components.community_cards import card_collection
 from components.community_info import communityBoard_map_card
 from components.community_fig import cbStar_chart, cbStar_chart_pct
 
-#
 df = pd.read_csv("./data/NYC_housingOnly_v0.csv")
 df_EnergyScore = (
     df[df["Calendar Year"] == 2023]
