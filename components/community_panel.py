@@ -66,7 +66,7 @@ community_panel = dbc.Container(
                             [
                                 dbc.CardHeader(
                                     ["ENERGY STAR Score Summary"],
-                                    className="bg-secondary fw-bold text-light mt-2 ms-3 me-3  ",
+                                    className="bg-primary fw-bold text-light mt-2 ms-3 me-3  ",
                                 ),
                                 dbc.CardBody(
                                     [
@@ -88,9 +88,40 @@ community_panel = dbc.Container(
         ),
         dbc.Row(
             [
-                dbc.Col([dcc.Graph(figure=fig_star, id="graphStar-id")], md=6, xs=12),
-                dbc.Col(
-                    [dcc.Graph(figure=fig_star_pct, id="graphStarPct-id")], md=6, xs=12
+                dbc.Card(
+                    [
+                        dbc.CardHeader(
+                            ["Community Boards Comparison"],
+                            className="bg-primary fw-bold text-light mt-2 ms-3 me-3  ",
+                        ),
+                        dbc.CardBody(
+                            [
+                                dbc.Row(
+                                    [
+                                        dbc.Col(
+                                            [
+                                                dcc.Graph(
+                                                    figure=fig_star, id="graphStar-id"
+                                                )
+                                            ],
+                                            md=6,
+                                            xs=12,
+                                        ),
+                                        dbc.Col(
+                                            [
+                                                dcc.Graph(
+                                                    figure=fig_star_pct,
+                                                    id="graphStarPct-id",
+                                                )
+                                            ],
+                                            md=6,
+                                            xs=12,
+                                        ),
+                                    ]
+                                )
+                            ]
+                        ),
+                    ]
                 ),
             ]
         ),

@@ -66,33 +66,33 @@ def cbStar_chart(value1):
         ]
     )
     fig_star.update_layout(
-        title_text="Average ENERGY STAR Score - Community Boards Comparison",
+        title_text="Average ENERGY STAR Score",
         paper_bgcolor="#060606",  # Primary background color
-        plot_bgcolor="#2a2a2a",   # Secondary background color
-        font_color="white",       # White font color for contrast
+        plot_bgcolor="#2a2a2a",  # Secondary background color
+        font_color="white",  # White font color for contrast
         hoverlabel=dict(
-                #bgcolor="white",
-                font_color="white",
-                font_size=16,
-                #font_family="Rockwell"
-                ),
+            # bgcolor="white",
+            font_color="white",
+            font_size=16,
+            # font_family="Rockwell"
+        ),
         coloraxis_colorbar=dict(
-            title=dict(
-                
-                font=dict(color="white")  # Colorbar title font color
-            ),
-            tickcolor="white",           # Colorbar tick color
-            tickfont=dict(color="white"),# Colorbar tick font color
- )
+            title=dict(font=dict(color="white")),  # Colorbar title font color
+            tickcolor="white",  # Colorbar tick color
+            tickfont=dict(color="white"),  # Colorbar tick font color
+        ),
     )
     fig_star.add_hline(
         y=y.mean(),
         line_width=3,
         line_dash="dash",
-        line_color="green",
+        line_color="red",
         annotation_text="mean",
         annotation_position="top left",
     )
+    fig_star.update_xaxes(title_text="Community Board")
+    fig_star.update_yaxes(title_text="Avg ENERGY Score")
+
     return fig_star
 
 
@@ -117,30 +117,30 @@ def cbStar_chart_pct(value1):
         ]
     )
     fig_star.update_layout(
+        title_text="ENERGY STAR Score over 75",
         paper_bgcolor="#060606",  # Primary background color
-        plot_bgcolor="#2a2a2a",   # Secondary background color
-        font_color="white",       # White font color for contrast
+        plot_bgcolor="#2a2a2a",  # Secondary background color
+        font_color="white",  # White font color for contrast
         hoverlabel=dict(
-                #bgcolor="white",
-                font_color="white",
-                font_size=16,
-                #font_family="Rockwell"
-                ),
+            # bgcolor="white",
+            font_color="white",
+            font_size=16,
+            # font_family="Rockwell"
+        ),
         coloraxis_colorbar=dict(
-            title=dict(
-                
-                font=dict(color="white")  # Colorbar title font color
-            ),
-            tickcolor="white",           # Colorbar tick color
-            tickfont=dict(color="white"),# Colorbar tick font color
- )
+            title=dict(font=dict(color="white")),  # Colorbar title font color
+            tickcolor="white",  # Colorbar tick color
+            tickfont=dict(color="white"),  # Colorbar tick font color
+        ),
     )
     fig_star.add_hline(
         y=y.mean(),
         line_width=3,
         line_dash="dash",
-        line_color="green",
+        line_color="red",
         annotation_text="mean",
         annotation_position="top left",
     )
+    fig_star.update_xaxes(title_text="Community Board")
+    fig_star.update_yaxes(title_text="Buildings %")
     return fig_star
