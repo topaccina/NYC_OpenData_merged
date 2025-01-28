@@ -34,28 +34,27 @@ def create_choropleth_map(dataframe, color, range_color, labels):
         map_style="open-street-map",
         locations="Postal Code",
         center={"lat": 40.7128, "lon": -74.0060},
-        height=650,
+        height=400,
     )
 
     # Update layout to match Cyborg theme
     fig.update_layout(
         paper_bgcolor="#060606",  # Primary background color
-        plot_bgcolor="#2a2a2a",   # Secondary background color
-        font_color="white",       # White font color for contrast
+        plot_bgcolor="#2a2a2a",  # Secondary background color
+        font_color="white",  # White font color for contrast
         margin={"r": 10, "t": 25, "l": 10, "b": 10},  # Adjust margins
         coloraxis_colorbar=dict(
             title=dict(
-                text=color,
-                font=dict(color="white")  # Colorbar title font color
+                text=color, font=dict(color="white")  # Colorbar title font color
             ),
-            tickcolor="white",           # Colorbar tick color
-            tickfont=dict(color="white"),# Colorbar tick font color
+            tickcolor="white",  # Colorbar tick color
+            tickfont=dict(color="white"),  # Colorbar tick font color
         ),
     )
     return fig
 
 
-app = Dash()
+# app = Dash()
 city_panel = dbc.Container(
     [
         dcc.Dropdown(
@@ -68,11 +67,11 @@ city_panel = dbc.Container(
             ],
             style={
                 "backgroundColor": "#white",  # Black background
-                "color": "#FFFFFF",             # White text
+                "color": "#FFFFFF",  # White text
                 "border": "1px solid #ffffff",  # Border for consistency with theme
-                "border-radius": "4px",        # Rounded corners
+                "border-radius": "4px",  # Rounded corners
                 "placeholder": {"color": "#ffffff"},  # White placeholder text
-                   },
+            },
         ),
         dcc.Graph(id="zip-map"),
         html.Div(id="filler"),

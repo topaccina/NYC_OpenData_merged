@@ -3,13 +3,18 @@ from dash import Dash, dcc, html, Input, Output, clientside_callback
 import plotly.express as px
 import dash_bootstrap_components as dbc
 import json
+import warnings
+
+warnings.filterwarnings(action="ignore")
 
 # import local components
 from components.navbar import navbar
 from components.info_table import grid
+from components.about import about_panel
 from components.community_panel import community_panel
 from components.city_view import city_panel
 from components.community_panel_filter import community_panel_filter
+from components.selBuilding_view import selBuilding_panel
 
 #
 # read data
@@ -24,10 +29,20 @@ app = Dash(
     # The dbc CYBORG team is generalized as the main style theme for the application, seconded by the dark_theme.css within the assets folder
     external_stylesheets=[dbc.themes.CYBORG, "/assets/dark_theme.css"],
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
+    suppress_callback_exceptions=True,
 )
 
 accordion = dbc.Accordion(
     [
+        dbc.AccordionItem(
+            [about_panel],
+            title="Learn about ...",
+            className="mt-1 ms-2 me-2 primary",
+            style={
+                "backgroundColor": "#060606",  # CYBORG-compatible dark background color for accordio item
+                "color": "#white",  # CYBORG-compatible white text color for accordio item
+            },
+        ),
         dbc.AccordionItem(
             [city_panel],
             title="Your City ...",
@@ -48,8 +63,9 @@ accordion = dbc.Accordion(
         ),
         dbc.AccordionItem(
             [
-                html.P("This is the content of the second section"),
-                dbc.Button("Don't click me!", color="danger"),
+                # html.P("This is the content of the second section"),
+                # dbc.Button("Don't click me!", color="danger"),
+                selBuilding_panel
             ],
             title="Your Building ...",
             className="mt-1 ms-2 me-2",

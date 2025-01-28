@@ -79,12 +79,12 @@ def communityBoard_map_card(borough_commBoard):
                 [headerCb],
                 id="headerCb-id",
                 style={
-                "backgroundColor": "#006BB6",  # New York blue
-                "color": "white",             # White text
-                "fontWeight": "bold",         # Bold text for emphasis
-                "padding": "10px",            # Padding for spacing
-            },
-                #className="bg-primary fw-bold text-light mt-2  ",
+                    "backgroundColor": "#006BB6",  # New York blue
+                    "color": "white",  # White text
+                    "fontWeight": "bold",  # Bold text for emphasis
+                    "padding": "10px",  # Padding for spacing
+                },
+                # className="bg-primary fw-bold text-light mt-2  ",
             ),
             dbc.CardBody(
                 dbc.Container(
