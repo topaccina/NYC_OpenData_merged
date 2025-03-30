@@ -70,6 +70,23 @@ accordion = dbc.Accordion(
             title="Your Building ...",
             className="mt-1 ms-2 me-2",
         ),
+        #Chat Bot
+        dbc.AccordionItem(
+            [
+        dbc.Row([
+            dbc.Col([html.Div('Ask our LLM questions about the Energy Star Score in your neighborhood')], width=8),
+        ]),
+        dbc.Row([
+            dbc.Col([dcc.Textarea(id='user-question', style={'width':400})], width=8),
+            dbc.Col([html.Button('Submit', id='submit-btn')], width=8),
+        ]),
+        dbc.Row([
+            dbc.Col([dcc.Markdown(id='response-div')], width=8),
+        ]),     
+            ],
+            title="Q&A Bot ...",
+            className="mt-1 ms-2 me-2",
+        ),
     ],
 )
 tab1_content = dbc.Container(
