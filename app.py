@@ -246,5 +246,25 @@ llm = init_chat_model("o3-mini", model_provider="openai")
 
 agent_executor = create_sql_agent(llm, db=db, agent_type="zero-shot-react-description", verbose=True, extra_tools=tools)
 
+import time
+
+from dash import Input, Output, html, callback, dcc, State, no_update
+
+@app.callback(
+    Output("loading-output", "children"),
+    Input("loading-button", "n_clicks"),
+    State('user-question', 'value'),
+    #running=[(Output("loading-button", "loading"), True, False)],
+    prevent_initial_call=True # Prevent the callback from firing on initial load
+)
+
+def load_output(n_clicks, question):
+  time.sleep(3)
+  if len(question) > 0:
+    response = agent_executor.invoke(question)
+    return response['output']
+  else:
+    return no_update
+
 if __name__ == "__main__":
     app.run_server(debug=True)
