@@ -207,5 +207,41 @@ app.layout = dbc.Container(
 #     Input("switch", "value"),
 # )
 
+#connect to sql database
+from sqlalchemy import create_engine
+from langchain_community.utilities import SQLDatabase
+
+engine = create_engine('sqlite:///opendata_sql_database.db', echo=False)
+db = SQLDatabase(engine=engine)
+
+#Create tools
+import getpass
+import os
+
+from langchain_community.tools.tavily_search import TavilySearchResults
+
+if not os.environ.get("TAVILY_API_KEY"):
+  os.environ["TAVILY_API_KEY"] = getpass.getpass("Enter API key for Tavily: ")
+
+tavily_tool = TavilySearchResults(
+    description="Use for information about NYC Local Law 33/18 and denfitions related to Building Energy Scores in NYC if it can't be found in the rag database.",
+    max_results=3
+    )
+
+tools = [tavily_tool]
+
+#Create Agent
+from langchain_openai import ChatOpenAI
+from langchain_community.agent_toolkits import create_sql_agent
+
+if not os.environ.get("OPENAI_API_KEY"):
+  os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter API key for OpenAI: ")
+
+from langchain.chat_models import init_chat_model
+
+llm = init_chat_model("o3-mini", model_provider="openai")
+
+agent_executor = create_sql_agent(llm, db=db, agent_type="zero-shot-react-description", verbose=True, extra_tools=tools)
+
 if __name__ == "__main__":
     app.run_server(debug=True)
