@@ -218,13 +218,15 @@ engine = create_engine('sqlite:///opendata_sql_database.db', echo=False)
 db = SQLDatabase(engine=engine)
 
 #Create tools
-import getpass
 import os
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
 
 from langchain_community.tools.tavily_search import TavilySearchResults
 
-if not os.environ.get("TAVILY_API_KEY"):
-  os.environ["TAVILY_API_KEY"] = getpass.getpass("Enter API key for Tavily: ")
+TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
 tavily_tool = TavilySearchResults(
     description="Use for information about NYC Local Law 33/18 and denfitions related to Building Energy Scores in NYC if it can't be found in the rag database.",
@@ -237,8 +239,7 @@ tools = [tavily_tool]
 from langchain_openai import ChatOpenAI
 from langchain_community.agent_toolkits import create_sql_agent
 
-if not os.environ.get("OPENAI_API_KEY"):
-  os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter API key for OpenAI: ")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 from langchain.chat_models import init_chat_model
 
