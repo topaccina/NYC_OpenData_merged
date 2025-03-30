@@ -80,10 +80,10 @@ accordion = dbc.Accordion(
             dbc.Col([dcc.Textarea(id='user-question', style={'width':400})], width=8),
         ]),
         dbc.Row([
-            dbc.Col([html.Div([dbc.Button("Submit", id="loading-button", n_clicks=0), dbc.Spinner(html.Div(id="loading-output"), color="", size="", spinner_style= {"position":"absolute", "left":"20px", "top":"20px"})]),
+            dbc.Col([html.Div([dbc.Button("Submit", id="loading-button", n_clicks=0)]),
         ]),
         dbc.Row([
-            dbc.Col([dcc.Markdown(id='response-div')], width=8),
+            dbc.Col([dbc.Spinner(html.Div(id="loading-output"), color="", size="", spinner_style= {"position":"fixed", "left":"60px", "bottom":"50px"}), dcc.Markdown(id='response-div')], width=8),
         ]), 
         ])    
             ],
@@ -229,7 +229,7 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
 tavily_tool = TavilySearchResults(
-    description="Use for information about NYC Local Law 33/18 and denfitions related to Building Energy Scores in NYC if it can't be found in the rag database.",
+    description="Use for information about NYC Local Law 33/18, NYC Local Law 84 of 2009, and denfitions related to Building Energy Scores in NYC.",
     max_results=3
     )
 
@@ -246,6 +246,10 @@ from langchain.chat_models import init_chat_model
 llm = init_chat_model("o3-mini", model_provider="openai")
 
 agent_executor = create_sql_agent(llm, db=db, agent_type="zero-shot-react-description", verbose=True, extra_tools=tools)
+
+#Track in Langsmith
+LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
+os.environ["LANGCHAIN_PROJECT"] = "sql-agent-tavily"
 
 import time
 
