@@ -78,11 +78,14 @@ accordion = dbc.Accordion(
         ]),
         dbc.Row([
             dbc.Col([dcc.Textarea(id='user-question', style={'width':400})], width=8),
-            dbc.Col([html.Button('Submit', id='submit-btn')], width=8),
+        ]),
+        dbc.Row([
+            dbc.Col([html.Div([dbc.Button("Submit", id="loading-button", n_clicks=0), dbc.Spinner(html.Div(id="loading-output"), color="", size="", spinner_style= {"position":"absolute", "left":"20px", "top":"20px"})]),
         ]),
         dbc.Row([
             dbc.Col([dcc.Markdown(id='response-div')], width=8),
-        ]),     
+        ]), 
+        ])    
             ],
             title="Q&A Bot ...",
             className="mt-1 ms-2 me-2",
