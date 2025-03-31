@@ -70,6 +70,26 @@ accordion = dbc.Accordion(
             title="Your Building ...",
             className="mt-1 ms-2 me-2",
         ),
+        #Chat Bot
+        dbc.AccordionItem(
+            [
+        dbc.Row([
+            dbc.Col([html.Div('Ask our LLM questions about the Energy Star Score in your neighborhood')], width=8),
+        ]),
+        dbc.Row([
+            dbc.Col([dcc.Textarea(id='user-question', style={'width':400})], width=8),
+        ]),
+        dbc.Row([
+            dbc.Col([html.Div([dbc.Button("Submit", id="loading-button", n_clicks=0)]),
+        ]),
+        dbc.Row([
+            dbc.Col([dbc.Spinner(html.Div(id="loading-output"), color="", size="", spinner_style= {"position":"fixed", "left":"60px", "bottom":"50px"}), dcc.Markdown(id='response-div')], width=8),
+        ]), 
+        ])    
+            ],
+            title="Q&A Bot ...",
+            className="mt-1 ms-2 me-2",
+        ),
     ],
 )
 tab1_content = dbc.Container(
@@ -189,6 +209,67 @@ app.layout = dbc.Container(
 #     Output("switch", "id"),
 #     Input("switch", "value"),
 # )
+
+#connect to sql database
+from sqlalchemy import create_engine
+from langchain_community.utilities import SQLDatabase
+
+engine = create_engine('sqlite:///opendata_sql_database.db', echo=False)
+db = SQLDatabase(engine=engine)
+
+#Create tools
+import os
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+from langchain_community.tools.tavily_search import TavilySearchResults
+
+TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
+
+tavily_tool = TavilySearchResults(
+    description="Use for information about NYC Local Law 33/18, NYC Local Law 84 of 2009, and denfitions related to Building Energy Scores in NYC.",
+    max_results=3
+    )
+
+tools = [tavily_tool]
+
+#Create Agent
+from langchain_openai import ChatOpenAI
+from langchain_community.agent_toolkits import create_sql_agent
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+from langchain.chat_models import init_chat_model
+
+llm = init_chat_model("o3-mini", model_provider="openai")
+
+agent_executor = create_sql_agent(llm, db=db, agent_type="zero-shot-react-description", verbose=True, extra_tools=tools)
+
+#Track in Langsmith
+LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
+os.environ["LANGCHAIN_PROJECT"] = "sql-agent-tavily"
+
+import time
+
+from dash import Input, Output, html, callback, dcc, State, no_update
+
+@app.callback(
+    Output("loading-output", "children"),
+    Input("loading-button", "n_clicks"),
+    State('user-question', 'value'),
+    #running=[(Output("loading-button", "loading"), True, False)],
+    prevent_initial_call=True # Prevent the callback from firing on initial load
+)
+
+def load_output(n_clicks, question):
+  time.sleep(3)
+  if len(question) > 0:
+    response = agent_executor.invoke(question)
+    return response['output']
+  else:
+    return no_update
 
 if __name__ == "__main__":
     app.run_server(debug=True)
